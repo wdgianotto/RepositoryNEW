@@ -85,14 +85,10 @@ public class ClienteService {
     public Conta coletarDadosSelecionarConta() {
         Conta conta = null;
         try{
-
-
             System.out.println("Digite a conta:\n");
             Integer contaCliente = Integer.parseInt(teclado.nextLine());
 
             List<Conta> listaContaCliente = buscarContas(contaCliente);
-
-
 
             Integer contador = 0;
 

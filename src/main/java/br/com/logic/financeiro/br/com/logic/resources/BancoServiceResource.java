@@ -13,15 +13,33 @@ public class BancoServiceResource {
     @Autowired
     private BancoService bancoService;
 
-//    @RequestMapping(value = "/{depositar}/{valor}", method = RequestMethod.PUT)
-//    public ResponseEntity<Void> depositar(@RequestBody Conta conta, @PathVariable Double valor){
-//        bancoService.depositar(conta);
+    @RequestMapping(value = "/{depositar}/{valor}", method = RequestMethod.PUT)
+    public ResponseEntity<Void> depositar(@RequestBody Conta conta, @PathVariable Double valor){
+        bancoService.depositar(conta, valor);
+        return ResponseEntity.noContent().build();
+    }
+
+    @RequestMapping(value = "/{sacar}/{valor}", method = RequestMethod.PUT)
+    public ResponseEntity<Void> sacar(@RequestBody Conta conta, @PathVariable Double valor){
+        bancoService.sacar(conta, valor);
+        return ResponseEntity.noContent().build();
+    }
+
+    @RequestMapping(value = "/{delete}/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> deletar(@RequestBody Conta conta, @PathVariable Integer id){
+        bancoService.excluirConta(id, conta);
+        return ResponseEntity.noContent().build();
+    }
+
+//    @RequestMapping(value = "/{transferir}/{id}", method = RequestMethod.DELETE)
+//    public ResponseEntity<Void> transferir(@RequestBody Conta conta, @PathVariable Integer id){
+//        bancoService.excluirConta(id, conta);
 //        return ResponseEntity.noContent().build();
 //    }
 
-//    @RequestMapping(value = "{sacar}/{valor}", method = RequestMethod.PUT)
-//    public ResponseEntity<Void> sacar(@RequestBody Conta conta, @PathVariable Double valor){
-//        bancoService.sacar(conta);
-//        return ResponseEntity.noContent().build();
-//    }
+    @RequestMapping(value = "/{relatorio}", method = RequestMethod.GET)
+    public ResponseEntity<Void> deletar(@RequestBody Conta conta){
+        bancoService.gerarRelatorioCliente(conta);
+        return ResponseEntity.noContent().build();
+    }
 }

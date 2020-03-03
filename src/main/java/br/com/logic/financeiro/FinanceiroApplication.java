@@ -9,6 +9,8 @@ import br.com.logic.financeiro.br.com.logic.services.MenuInicial;
 import br.com.logic.financeiro.br.com.logic.domain.Banco;
 import br.com.logic.financeiro.br.com.logic.domain.Conta;
 import br.com.logic.financeiro.br.com.logic.domain.TipoConta;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -43,7 +45,7 @@ public class FinanceiroApplication implements CommandLineRunner {
 
 
     @Override
-    public void run(String... args)  {
+    public void run(String... args) throws JsonProcessingException {
         List<Conta> listaContaCliente;
 //        bancoRepository.deleteAll();
 //        tipoContaRepository.deleteAll();
@@ -60,6 +62,11 @@ public class FinanceiroApplication implements CommandLineRunner {
         clienteRepository.save(cliente);
 
         contaRepository.save(new Conta(null,  123, 400D,cliente,bancoSantander,tipoConta, 500.00));
+        Conta contaTeste = new Conta(null,  123, 400D,cliente,bancoSantander,tipoConta, 500.00);
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(contaTeste);
+        System.out.println(json);
+
 
         menuInicial.menuInicialCliente();
 
