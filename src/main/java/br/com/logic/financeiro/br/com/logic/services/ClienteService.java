@@ -4,10 +4,10 @@ import br.com.logic.financeiro.br.com.logic.repositories.BancoRepository;
 import br.com.logic.financeiro.br.com.logic.repositories.ClienteRepository;
 import br.com.logic.financeiro.br.com.logic.repositories.ContaRepository;
 import br.com.logic.financeiro.br.com.logic.repositories.TipoContaRepository;
-import br.com.logic.financeiro.br.com.logic.vo.Banco;
-import br.com.logic.financeiro.br.com.logic.vo.Cliente;
-import br.com.logic.financeiro.br.com.logic.vo.Conta;
-import br.com.logic.financeiro.br.com.logic.vo.TipoConta;
+import br.com.logic.financeiro.br.com.logic.domain.Banco;
+import br.com.logic.financeiro.br.com.logic.domain.Cliente;
+import br.com.logic.financeiro.br.com.logic.domain.Conta;
+import br.com.logic.financeiro.br.com.logic.domain.TipoConta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,10 +35,13 @@ public class ClienteService {
     @Autowired
     private TipoContaRepository tipoContaRepository;
 
+    @Autowired
+    private MenuLogado menuLogado;
+
     Scanner teclado = new Scanner(System.in);
 
                                 /*          COLETA DADOS PARA CRIAÇÃO DA CONTA          */
-    public void coletarDadosClienteCriarConta() throws Exception {
+    public void coletarDadosClienteCriarConta()  {
 
         List<Conta> listaContaCliente;
 
@@ -56,7 +59,8 @@ public class ClienteService {
         Integer contaCliente = Integer.parseInt(teclado.nextLine());
 
         //VALIDA SE A CONTA EXISTE
-        listaContaCliente = contaRepository.findAllByNumeroContaAndIdBancoAndIdTipoConta(contaCliente, tipoContaEscolhida, bancoEscolhido);
+        listaContaCliente = contaRepository.findAllByNumeroContaAndIdBancoAndIdTipoConta(contaCliente,
+                tipoContaEscolhida, bancoEscolhido);
 
         //SE NÃO EXISTIR, SOLICITA O RESTANTE DAS INFORMAÇÕES
         if (listaContaCliente.isEmpty()) {
@@ -78,56 +82,66 @@ public class ClienteService {
         }
     }
                         /*          COLETA DADOS PARA ACESSAR A CONTA          */
-    public void coletarDadosSelecionarConta() throws Exception {
-        try {
-            System.out.println("Digite sua conta:\n");
+    public Conta coletarDadosSelecionarConta() {
+        Conta conta = null;
+        try{
+
+
+            System.out.println("Digite a conta:\n");
             Integer contaCliente = Integer.parseInt(teclado.nextLine());
 
             List<Conta> listaContaCliente = buscarContas(contaCliente);
 
+
+
             Integer contador = 0;
 
             if (listaContaCliente.isEmpty()) {
-                System.out.println("Conta inexistente!");
+                conta = null;
             } else {
                 System.out.println("Escolha uma conta:\n");
-                for (Conta conta : listaContaCliente) {
-                    System.out.println(++contador + ": " + "banco: " + conta.getBanco().getNome() + ", Tipo da conta: "
-                            + conta.getTipoConta().getTipoConta() + ", Saldo: " + conta.getSaldo());
+                for (Conta contaAux : listaContaCliente) {
+                    System.out.println(++contador + ": " + "banco: " + contaAux.getBanco().getNome() + ", Tipo da conta: "
+                            + contaAux.getTipoConta().getTipoConta() + ", Saldo: " + contaAux.getSaldo());
                 }
                 Integer contaSelecionada = Integer.parseInt(teclado.nextLine());
-                Conta conta = listaContaCliente.get(contaSelecionada - 1);
+                conta = listaContaCliente.get(contaSelecionada - 1);
             }
-        }catch(Exception e){
-            throw e;
-        }
 
+        }
+        catch(Exception e){
+            System.out.println("Conta inexistente!");
+            menuInicial.menuInicialCliente();
+        }
+        return conta;
     }
 
     @Transactional
     public void salvarCliente(Integer idBanco, Integer idTipoConta, Integer contaCliente,
-                              String nomeCliente, Double saldo, String cpf) throws Exception {
-        try {
-            Cliente validaCliente = obterCliente(cpf);
-            if (validaCliente == null) {
-                Cliente cliente = new Cliente(null, nomeCliente, cpf);
-                clienteRepository.save(cliente);
-                validaCliente = cliente;
-            }
+                              String nomeCliente, Double saldo, String cpf) {
+            try {
+                Cliente validaCliente = obterCliente(cpf);
+                if (validaCliente == null) {
+                    Cliente cliente = new Cliente(null, nomeCliente, cpf);
+                    clienteRepository.save(cliente);
+                    validaCliente = cliente;
+                }
                 Banco banco = obterBanco(idBanco);
                 TipoConta tipoConta = obterTipoConta(idTipoConta);
 
-                contaRepository.save(new Conta(null, nomeCliente, cpf, banco.getNome(), banco.getAg(), contaCliente, saldo, validaCliente, banco, tipoConta));
+                contaRepository.save(new Conta(null, contaCliente,
+                        saldo, validaCliente, banco, tipoConta, 500.00));
 
-            System.out.println("Conta salva com sucesso!");
-            menuInicial.menuInicialCliente();
-            }catch(Exception e){
-                throw e;
+                System.out.println("Conta salva com sucesso!");
+                menuInicial.menuInicialCliente();
+            }
+            catch(Exception e){
+                menuInicial.menuInicialCliente();
             }
     }
 
 
-    public Banco obterBanco(Integer idBanco) throws Exception{
+    public Banco obterBanco(Integer idBanco) throws Exception {
         return bancoRepository.findById(idBanco).orElseThrow(() -> new Exception(""));
     }
 
@@ -146,7 +160,9 @@ public class ClienteService {
     }
 
     public List<Conta> buscarContas(Integer numeroConta) throws Exception{
-        List<Conta> listaContaCliente = contaRepository.findByNumeroConta(numeroConta).orElseThrow(() -> new Exception(""));
+        List<Conta> listaContaCliente = contaRepository.findByNumeroConta(numeroConta).orElseThrow(() -> new Exception("Conta Inexistente"));
         return listaContaCliente;
     }
+
+
 }

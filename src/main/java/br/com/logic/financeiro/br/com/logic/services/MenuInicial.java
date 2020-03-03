@@ -1,5 +1,6 @@
 package br.com.logic.financeiro.br.com.logic.services;
 
+import br.com.logic.financeiro.br.com.logic.domain.Conta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +12,10 @@ public class MenuInicial {
     @Autowired
     private ClienteService clienteService;
 
-//    @Autowired
-//    private LogarContaCliente logarContaCliente;
+    @Autowired
+    private MenuLogado menuLogado;
 
-    public void menuInicialCliente() throws Exception {
+    public void menuInicialCliente() {
 
         Scanner teclado = new Scanner(System.in);
 
@@ -28,7 +29,13 @@ public class MenuInicial {
                 clienteService.coletarDadosClienteCriarConta();
             }
             else if(menu == 2){
-                clienteService.coletarDadosSelecionarConta();
+                Conta conta = clienteService.coletarDadosSelecionarConta();
+                if(conta == null){
+                    System.out.println("Conta inexistente!");
+                }else{
+                    menuLogado.menuLogadoCliente(conta);
+                }
+
             }else{
                 System.out.println("Comando inválido");
                 menuInicialCliente();
