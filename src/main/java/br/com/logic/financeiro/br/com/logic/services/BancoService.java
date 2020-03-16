@@ -1,6 +1,8 @@
 package br.com.logic.financeiro.br.com.logic.services;
 
 import br.com.logic.financeiro.br.com.logic.domain.Conta;
+import br.com.logic.financeiro.br.com.logic.domain.DTO.ContaDTO;
+import br.com.logic.financeiro.br.com.logic.repositories.BancoRepository;
 import br.com.logic.financeiro.br.com.logic.repositories.ContaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,11 +37,11 @@ public class BancoService {
     private MensagemService mensagemService;
 
     @Transactional
-    public void excluirConta(Integer id, Conta conta) {
+    public void excluirConta(Conta conta) {
         String respostaExclusaoConta = mensagemService.enviarMensagemConsumoString("Deseja excluir a conta? (s/n)");
 
         if("s".equals(respostaExclusaoConta)){
-            contaRepository.deleteById(id);
+            contaRepository.deleteById(conta.getId());
             System.out.println("Conta excluída com sucesso!");
         } else{
             menuLogado.menuLogadoCliente(conta);
@@ -65,7 +67,6 @@ public class BancoService {
             saque.alterarDadosSaque(conta, valorSaque);
             saque.salvarDadosSaque(conta.getId(), conta.getSaldo(), conta.getCredito());
             System.out.println("Saque realizado com sucesso!");
-            menuLogado.menuLogadoCliente(conta);
 
         }else{
             System.out.println("Saldo insuficiente, saldo: " + conta.getSaldo() + " Credito: " + conta.getCredito() +
@@ -79,10 +80,11 @@ public class BancoService {
         deposito.salvarDadosDeposito(conta.getId(), conta.getSaldo());
     }
 
+
     @Transactional
     public void transferir(Conta conta, Double valorTransferencia){
 
-        Conta contaBeneficiario = clienteService.coletarDadosSelecionarConta();
+        Conta contaBeneficiario = clienteService.coletarDadosSelecionarConta(clienteService.menuEscolheNumeroConta());
 
         Boolean validarTransferencia = transferencia.validarTransferencia(conta, contaBeneficiario, valorTransferencia);
         if(validarTransferencia){
@@ -113,5 +115,4 @@ public class BancoService {
         Double valorTransferencia = mensagemService.enviarMensagemConsumoDouble("Qual o valor que deseja transferir?\n");
         return valorTransferencia;
     }
-
 }

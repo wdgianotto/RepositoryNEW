@@ -26,10 +26,14 @@ public class MenuInicial {
             Integer menu = Integer.parseInt(teclado.nextLine());
 
             if(menu == 1){
-                clienteService.coletarDadosClienteCriarConta();
+                Conta conta = clienteService.obterConta
+                        (clienteService.menuEscolheBanco(), clienteService.menuEscolheTipoConta(),
+                         clienteService.menuEscolheNumeroConta(), clienteService.menuEscolheSaldo(),
+                                clienteService.menuEscolheCPF());
+                clienteService.criarContaOrquestrador(conta);
             }
             else if(menu == 2){
-                Conta conta = clienteService.coletarDadosSelecionarConta();
+                Conta conta = clienteService.coletarDadosSelecionarConta(clienteService.menuEscolheNumeroConta());
                 if(conta == null){
                     System.out.println("Conta inexistente!");
                 }else{
@@ -41,5 +45,4 @@ public class MenuInicial {
                 menuInicialCliente();
             }
     }
-
 }

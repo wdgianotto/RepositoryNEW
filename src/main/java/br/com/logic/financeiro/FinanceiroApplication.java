@@ -42,8 +42,6 @@ public class FinanceiroApplication implements CommandLineRunner {
         SpringApplication.run(FinanceiroApplication.class, args);
     }
 
-
-
     @Override
     public void run(String... args) throws JsonProcessingException {
         List<Conta> listaContaCliente;
@@ -57,12 +55,13 @@ public class FinanceiroApplication implements CommandLineRunner {
         TipoConta tipoConta = new TipoConta(null,"Conta Corrente");
         TipoConta tipoContaPoupanca = new TipoConta(null,"Conta Poupanca");
         tipoContaRepository.saveAll(Arrays.asList(tipoConta,tipoContaPoupanca));
-//;
+
         Cliente cliente = new Cliente(null, "wed", "1");
         clienteRepository.save(cliente);
 
         contaRepository.save(new Conta(null,  123, 400D,cliente,bancoSantander,tipoConta, 500.00));
         Conta contaTeste = new Conta(null,  123, 400D,cliente,bancoSantander,tipoConta, 500.00);
+        Conta contaTesteTeste = new Conta(null,  123, 400D,cliente,bancoSantander,tipoConta, 500.00);
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(contaTeste);
         System.out.println(json);

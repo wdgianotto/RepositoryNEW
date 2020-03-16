@@ -1,6 +1,7 @@
 package br.com.logic.financeiro.br.com.logic.services;
 
 import br.com.logic.financeiro.br.com.logic.domain.Conta;
+import br.com.logic.financeiro.br.com.logic.domain.DTO.ContaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ public class MenuLogado {
 
         switch (menuLogado) {
             case 1:
-                bancoService.excluirConta(conta.getId(), conta);
+                bancoService.excluirConta(conta);
                 menuInicial.menuInicialCliente();
                 break;
             case 2:
